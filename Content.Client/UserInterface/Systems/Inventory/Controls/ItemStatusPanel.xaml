@@ -23,7 +23,7 @@
         <BoxContainer Name="StatusContents" Orientation="Vertical" VerticalExpand="True" VerticalAlignment="Bottom" />
         <Control>
             <Label Name="NoItemLabel" ClipText="True" StyleClasses="ItemStatusNotHeld" Align="Left" Text="{Loc 'item-status-not-held'}" />
-            <Label Name="ItemNameLabel" ClipText="True" StyleClasses="ItemStatus" Align="Left" Visible="False" />
+            <RichTextLabel Name="ItemNameLabel" StyleClasses="ItemStatus" Visible="False" />
         </Control>
     </BoxContainer>
 </controls:ItemStatusPanel>
