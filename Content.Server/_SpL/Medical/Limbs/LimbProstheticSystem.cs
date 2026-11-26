@@ -200,14 +200,14 @@ public sealed partial class LimbProstheticSystem : EntitySystem {
             !TryComp(user, out MetaDataComponent? userMeta)) return;
 
         // Checks if the player isn't trying to remove their only remaining hand
-        if (!_bodySystem.BodyHasPartTypeOfSymmetry(user, partComp.PartType, FlipSymmetry(partComp.Symmetry)) && 
-            target == user){
-                if (partComp.PartType == BodyPartType.Hand || partComp.PartType == BodyPartType.Arm){
-                    _popupSystem.PopupEntity("You can't remove your only remaining hand by yourself!", target, PopupType.Medium);
-                    return;
-                }
+        if (!_bodySystem.BodyHasPartTypeOfSymmetry(user, partComp.PartType, FlipSymmetry(partComp.Symmetry)) &&
+            target == user) {
+            if (partComp.PartType == BodyPartType.Hand || partComp.PartType == BodyPartType.Arm) {
+                _popupSystem.PopupEntity("You can't remove your only remaining hand by yourself!", target, PopupType.Medium);
+                return;
+            }
         }
-        
+
         //REMOVAL DOAFTER
         var doAfter =
             new DoAfterArgs(EntityManager, user, 6f, new RemoveProstheticDoAfterEvent(GetNetEntity(target), GetNetEntity(user), GetNetEntity(entity)), entity, target: target, used: entity)
@@ -219,13 +219,17 @@ public sealed partial class LimbProstheticSystem : EntitySystem {
                 RequireCanInteract = true,
             };
 
-        if (target != user){
-            _popupSystem.PopupEntity($"{userMeta.EntityName.ToLower()} is trying to take off your {partMeta.EntityName.ToLower()}!", target, PopupType.MediumCaution);
-        } else {
-            _popupSystem.PopupEntity($"you begin to take off your {partMeta.EntityName.ToLower()}!", target, PopupType.Medium);
+        if (_doAfterSystem.TryStartDoAfter(doAfter))
+        {
+            if (target != user)
+            {
+                _popupSystem.PopupEntity($"{userMeta.EntityName.ToLower()} is trying to take off your {partMeta.EntityName.ToLower()}!", target, PopupType.MediumCaution);
+            }
+            else
+            {
+                _popupSystem.PopupEntity($"you begin to take off your {partMeta.EntityName.ToLower()}!", target, PopupType.Medium);
+            }
         }
-        
-        _doAfterSystem.TryStartDoAfter(doAfter);
     }
 
     private void TryRemovalAfterInteract(Entity<LimbProstheticComponent> entity, ref RemoveProstheticDoAfterEvent args)
